@@ -1,10 +1,10 @@
-=========================================
+#=========================================
 
 FIXED AI Compliance Assistant (Streamlit + Gemini)
 
 Fully Working Version (Voice + PDF + AI)
 
-=========================================
+#=========================================
 
 import streamlit as st import google.generativeai as genai import os from dotenv import load_dotenv from PyPDF2 import PdfReader from streamlit_mic_recorder import mic_recorder from gtts import gTTS import base64 import hashlib
 
