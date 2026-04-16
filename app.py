@@ -1,19 +1,24 @@
 import streamlit as st
 import google.generativeai as genai
 import os
-from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from streamlit_mic_recorder import mic_recorder
 from gtts import gTTS
 import base64
 import hashlib
-import time
 
 # 1. SETUP & CONFIGURATION
-load_dotenv()
-# Amfani da Gemini 1.5 Flash don gudu da inganci
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-pro")
+# Using st.secrets for secure API key management on Streamlit Cloud
+if "GEMINI_API_KEY" in st.secrets:
+    api_key = st.secrets["GEMINI_API_KEY"]
+else:
+    # Placeholder for local testing (Replace with your key if not using secrets)
+    api_key = "YOUR_API_KEY_HERE" 
+
+genai.configure(api_key=api_key)
+
+# Using the specific model name to avoid 404/v1beta errors
+model = genai.GenerativeModel(model_name="models/gemini-1.5-flash")
 
 st.set_page_config(
     page_title="Gen Z AI - Robot Assistant", 
@@ -23,7 +28,7 @@ st.set_page_config(
 
 # --- FUNCTIONS ---
 def text_to_speech(text):
-    """Yana mayar da rubutu zuwa murya"""
+    """Converts text to speech and plays it automatically"""
     try:
         tts = gTTS(text=text, lang='en')
         tts.save("response.mp3")
@@ -63,34 +68,37 @@ with col1:
     st.subheader("🎤 Voice & Text Input")
     # Voice Input
     audio = mic_recorder(
-        start_prompt="Danna nan don yin magana (Voice) 🎤", 
-        stop_prompt="Tsaya (Stop) 🛑", 
+        start_prompt="Click here to speak (Voice) 🎤", 
+        stop_prompt="Stop Recording 🛑", 
         key='recorder'
     )
     
     # Text Input
-    question = st.text_area("Rubuta tambayarka a nan:", placeholder="Misali: Mene ne hakki na idan 'Road Safety' suka tsayar da ni?")
+    question = st.text_area("Type your question here:", placeholder="Example: What are my rights if stopped by the FRSC?")
 
 with col2:
     st.subheader("📄 Document Analysis")
-    uploaded_file = st.file_uploader("Dora takardar ka (PDF) don tantancewa", type="pdf")
+    uploaded_file = st.file_uploader("Upload your document (PDF) for analysis", type="pdf")
 
 # Logic for PDF Content
 doc_content = ""
 file_hash = ""
 if uploaded_file:
-    reader = PdfReader(uploaded_file)
-    for page in reader.pages:
-        doc_content += page.extract_text()
-    file_hash = hashlib.sha256(uploaded_file.getvalue()).hexdigest()
-    st.success(f"File Uploaded: {uploaded_file.name}")
-    st.code(f"Blockchain Hash: {file_hash[:20]}...", language="text")
+    try:
+        reader = PdfReader(uploaded_file)
+        for page in reader.pages:
+            doc_content += page.extract_text()
+        file_hash = hashlib.sha256(uploaded_file.getvalue()).hexdigest()
+        st.success(f"File Uploaded: {uploaded_file.name}")
+        st.code(f"Blockchain Hash: {file_hash[:20]}...", language="text")
+    except Exception as e:
+        st.error(f"Error reading PDF: {e}")
 
 # --- EXECUTION ---
 if st.button("🚀 Process & Ask AI"):
     if question or doc_content:
-        with st.spinner("Gen Z AI yana nazari..."):
-            # Sabon Prompt dinka
+        with st.spinner("Gen Z AI is analyzing..."):
+            # System Prompt
             prompt = f"""
             You are Gen Z AI, a futuristic Nigerian Robot Assistant deployed in public places.
 
@@ -117,13 +125,17 @@ if st.button("🚀 Process & Ask AI"):
                 st.subheader("🤖 Robot Response:")
                 st.markdown(res_text)
                 
-                # Murya ta tashi
-                text_to_speech(res_text[:350]) # Karanta takaitaccen bayani don gudun nauyi
+                # Activate voice response for the first 300 characters
+                text_to_speech(res_text[:300]) 
                 
             except Exception as e:
-                st.error(f"Error: {e}")
+                st.error(f"Error processing request: {e}")
+                st.info("Check if your API Key is correctly set in Streamlit Secrets.")
     else:
-        st.warning("Da fatan za a yi magana, rubuta tambaya, ko dora takarda.")
+        st.warning("Please provide a voice input, type a question, or upload a document.")
 
 st.divider()
-st.center = st.markdown("<center>Gen Z AI - Built for Nigerian Excellence 🚀</center>", unsafe_allow_html=True)
+st.markdown("<center>Gen Z AI - Built for Nigerian Excellence 🚀</center>", unsafe_allow_html=True)
+
+
+
