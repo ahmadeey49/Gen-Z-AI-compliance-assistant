@@ -24,7 +24,7 @@ else:
 genai.configure(api_key=api_key)
 
 # We use the full model path to ensure it works across all API versions
-model = genai.GenerativeModel(model_name="models/gemini-1.5-flash")
+model = genai.GenerativeModel(model_name="gemini-2.0-flash")
 
 st.set_page_config(
     page_title="Gen Z AI - Robot Assistant", 
