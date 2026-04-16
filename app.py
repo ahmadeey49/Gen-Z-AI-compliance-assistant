@@ -10,7 +10,7 @@ import hashlib
 # 1. SETUP & CONFIGURATION
 # Using st.secrets for secure API key management on Streamlit Cloud
 if "GEMINI_API_KEY" in st.secrets:
-    api_key = st.secrets["AQ.Ab8RN6JA8Xr6dZiMejRVVF6cwcshP9WXHIyzKh6GRX9TBZU1rw"]
+    api_key = st.secrets[""]
 else:
     # Placeholder for local testing (Replace with your key if not using secrets)
     api_key = "YOUR_API_KEY_HERE" 
