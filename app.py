@@ -119,7 +119,7 @@ if st.button("🚀 Process & Ask AI"):
             
             try:
                 response = model.generate_content(prompt)
-                res_text = response.text
+                res_text = response.text if hasattr(response, "text") else str(response)
                 
                 st.divider()
                 st.subheader("🤖 Robot Response:")
