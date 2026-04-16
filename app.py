@@ -6,13 +6,6 @@ from streamlit_mic_recorder import mic_recorder
 from gtts import gTTS
 import base64
 # Wannan zai nuna mana jerin models din da kake da damar amfani da su
-try:
-    st.write("Checking available models for your API Key...")
-    for m in genai.list_models():
-        if 'generateContent' in m.supported_generation_methods:
-            st.info(f"Available Model: {m.name}")
-except Exception as e:
-    st.error(f"Could not list models: {e}")
 
 # --- CONFIGURATION ---
 # We fetch the API key from Streamlit Secrets
