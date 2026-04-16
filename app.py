@@ -18,7 +18,7 @@ else:
 genai.configure(api_key=api_key)
 
 # Using the specific model name to avoid 404/v1beta errors
-model = genai.GenerativeModel("gemini-pro")
+model = genai.GenerativeModel("models/gemini-1.5-flash")
 
 st.set_page_config(
     page_title="Gen Z AI - Robot Assistant", 
