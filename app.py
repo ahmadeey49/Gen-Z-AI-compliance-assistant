@@ -9,6 +9,9 @@ import hashlib
 
 # 1. SETUP & CONFIGURATION
 # Using st.secrets for secure API key management on Streamlit Cloud
+if "GEMINI_API_KEY" in st.secrets:
+    api_key = st.secrets["GEMINI_API_KEY"]
+else:
     # Placeholder for local testing (Replace with your key if not using secrets)
     api_key = "YOUR_API_KEY_HERE" 
 
@@ -133,6 +136,5 @@ if st.button("🚀 Process & Ask AI"):
 
 st.divider()
 st.markdown("<center>Gen Z AI - Built for Nigerian Excellence 🚀</center>", unsafe_allow_html=True)
-
 
 
